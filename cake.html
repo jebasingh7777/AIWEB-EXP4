@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cake Shop Order</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Top Header */
+        .header {
+            background-color: #b30000;
+            color: white;
+            padding: 10px;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        /* Cake Display Section */
+        .cake-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .cake-item {
+            width: 200px;
+        }
+
+        .cake-item img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+
+        .cake-label {
+            font-size: 14px;
+            margin-top: 8px;
+            color: #333;
+        }
+
+        /* Order Form Section */
+        .order-section {
+            width: 500px;
+            margin: 0 auto;
+            text-align: left;
+        }
+
+        .order-title {
+            color: #2b5797;
+            text-align: center;
+            font-weight: bold;
+            font-size: 22px;
+            margin-bottom: 15px;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        .input-group label {
+            display: block;
+            color: #2b5797;
+            font-weight: bold;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #777;
+            color: #d11141;
+            font-weight: bold;
+        }
+
+        /* Button */
+        .place-order-btn {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 4px;
+        }
+
+        hr {
+            width: 500px;
+            border: 0.5px solid #2b5797;
+            margin: 30px auto 10px;
+        }
+
+        /* Bill Results */
+        .bill-title {
+            color: #008000;
+            font-weight: bold;
+            font-size: 20px;
+            margin-top: 10px;
+        }
+
+        .result-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 10px;
+            gap: 20px;
+        }
+
+        .total-price-box {
+            background-color: #00a65a;
+            color: white;
+            padding: 10px 40px;
+            font-size: 20px;
+            font-weight: bold;
+            width: 200px;
+        }
+
+        .final-amount {
+            color: #d11141;
+            font-size: 24px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">CAKE SHOP</div>
+
+    <!-- Product Grid -->
+    <div class="cake-container">
+        <div class="cake-item">
+            <img src="https://images.unsplash.com/photo-1557925923-33b27f891f88?auto=format&fit=crop&w=200&h=150" alt="Color Cake">
+            <div class="cake-label">Color Cake &ndash; Rs. 300</div>
+        </div>
+        <div class="cake-item">
+            <img src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=200&h=150" alt="Brown Cake">
+            <div class="cake-label">Brown Cake &ndash; Rs. 200</div>
+        </div>
+        <div class="cake-item">
+            <img src="https://images.unsplash.com/photo-1542826438-bd32f43d626f?auto=format&fit=crop&w=200&h=150" alt="Milky Cake">
+            <div class="cake-label">Milky Cake &ndash; Rs. 250</div>
+        </div>
+        <div class="cake-item">
+            <img src="https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=200&h=150" alt="Black Forest Cake">
+            <div class="cake-label">Black Forest Cake &ndash; Rs. 350</div>
+        </div>
+    </div>
+
+    <!-- Order Input Form -->
+    <div class="order-section">
+        <div class="order-title">Order Cake</div>
+        
+        <div class="input-group">
+            <label>Color Cake(Quantity)</label>
+            <input type="number" id="qty1" value="0">
+        </div>
+        
+        <div class="input-group">
+            <label>Brown Cake(Quantity)</label>
+            <input type="number" id="qty2" value="0">
+        </div>
+
+        <div class="input-group">
+            <label>Milky Cake(Quantity)</label>
+            <input type="number" id="qty3" value="0">
+        </div>
+
+        <div class="input-group">
+            <label>Black Forest Cake(Quantity)</label>
+            <input type="number" id="qty4" value="0">
+        </div>
+
+        <!-- Onclick used as specified -->
+        <button class="place-order-btn" onclick="calculateBill()">Place Order</button>
+    </div>
+
+    <hr>
+
+    <!-- Bill Display -->
+    <div class="bill-title">Purchase Order Bill!!</div>
+    
+    <div class="result-container">
+        <div class="total-price-box">Total Price</div>
+        <div class="final-amount" id="totalDisplay">Rs. 0</div>
+    </div>
+
+    <script>
+        function calculateBill() {
+            // Using getElementById as per requirement
+            const q1 = parseInt(document.getElementById("qty1").value) || 0;
+            const q2 = parseInt(document.getElementById("qty2").value) || 0;
+            const q3 = parseInt(document.getElementById("qty3").value) || 0;
+            const q4 = parseInt(document.getElementById("qty4").value) || 0;
+
+            // Price list
+            const p1 = 300;
+            const p2 = 200;
+            const p3 = 250;
+            const p4 = 350;
+
+            // Total Calculation
+            const total = (q1 * p1) + (q2 * p2) + (q3 * p3) + (q4 * p4);
+
+            // Display update
+            document.getElementById("totalDisplay").innerHTML = "Rs." + total;
+        }
+    </script>
+
+</body>
+</html>

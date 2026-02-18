@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Bank Loan EMI Calculator</title>
+  <style>
+    :root{--bg:#f4f7fb;--card:#fff;--accent:#2b6cb0;--muted:#6b7280}
+    body{font-family:Inter,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);margin:0;display:flex;align-items:center;justify-content:center;min-height:100vh}
+    .container{width:100%;max-width:760px;padding:28px}
+    .card{background:var(--card);border-radius:12px;box-shadow:0 6px 24px rgba(30,41,59,0.08);padding:24px}
+    h1{margin:0 0 12px;font-size:20px;color:#0f172a}
+    p.lead{margin:0 0 20px;color:var(--muted)}
+    form.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+    label{display:block;font-size:13px;color:#374151;margin-bottom:6px}
+    input[type="number"],select{width:100%;padding:10px;border:1px solid #e6e9ef;border-radius:8px;font-size:15px}
+    .full{grid-column:1/-1}
+    .actions{display:flex;gap:10px;margin-top:12px}
+    button{background:var(--accent);color:#fff;border:0;padding:10px 14px;border-radius:8px;cursor:pointer;font-weight:600}
+    button.secondary{background:#e6eefc;color:var(--accent);border:1px solid #dbeefd}
+    .results{display:flex;gap:12px;margin-top:18px}
+    .result{flex:1;background:linear-gradient(180deg,#fff,#fbfdff);padding:14px;border-radius:10px;border:1px solid #eef4fb;text-align:center}
+    .result h3{margin:0;font-size:18px;color:var(--accent)}
+    .muted{color:var(--muted);font-size:13px}
+    footer{margin-top:14px;color:var(--muted);font-size:13px}
+    @media (max-width:640px){form.grid{grid-template-columns:1fr} .results{flex-direction:column}}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h1>Bank Loan EMI Calculator</h1>
+      <p class="lead">Enter loan details below to calculate monthly EMI, total payment and total interest.</p>
+      <form id="emiForm" class="grid" onsubmit="return calculateEMI(event)">
+        <div>
+          <label for="principal">Loan Amount (P)</label>
+          <input id="principal" type="number" min="0" step="0.01" placeholder="e.g. 500000" required />
+        </div>
+        <div>
+          <label for="rate">Annual Interest Rate (%)</label>
+          <input id="rate" type="number" min="0" step="0.01" placeholder="e.g. 7.5" required />
+        </div>
+        <div>
+          <label for="tenure">Tenure</label>
+          <input id="tenure" type="number" min="1" step="1" placeholder="e.g. 60" required />
+        </div>
+        <div>
+          <label for="unit">Tenure Unit</label>
+          <select id="unit">
+            <option value="months">Months</option>
+            <option value="years">Years</option>
+          </select>
+        </div>
+        <div class="full actions">
+          <button type="submit">Calculate EMI</button>
+          <button type="button" class="secondary" onclick="resetForm()">Reset</button>
+        </div>
+      </form>
+
+      <div id="output" class="results" style="display:none;margin-top:18px">
+        <div class="result">
+          <div class="muted">Monthly EMI</div>
+          <h3 id="emiVal">0</h3>
+        </div>
+        <div class="result">
+          <div class="muted">Total Payment</div>
+          <h3 id="totalPay">0</h3>
+        </div>
+        <div class="result">
+          <div class="muted">Total Interest</div>
+          <h3 id="totalInt">0</h3>
+        </div>
+      </div>
+
+      <footer>EMI formula: EMI = [P × r × (1+r)^N] / [(1+r)^N − 1], where r = monthly rate (annual%/12/100) and N = tenure in months.</footer>
+    </div>
+  </div>
+
+  <script>
+    function formatCurrency(num){
+      if (!isFinite(num)) return '—';
+      return Number(num).toLocaleString(undefined, {minimumFractionDigits:2,maximumFractionDigits:2});
+    }
+
+    function calculateEMI(e){
+      if (e) e.preventDefault();
+      const P = parseFloat(document.getElementById('principal').value);
+      const annualRate = parseFloat(document.getElementById('rate').value);
+      const tenure = parseFloat(document.getElementById('tenure').value);
+      const unit = document.getElementById('unit').value;
+
+      if (!isFinite(P) || P <= 0 || !isFinite(annualRate) || annualRate < 0 || !isFinite(tenure) || tenure <= 0) {
+        alert('Please enter valid positive numbers for loan, rate and tenure.');
+        return false;
+      }
+
+      const N = (unit === 'years') ? Math.round(tenure * 12) : Math.round(tenure);
+      const r = annualRate / 12 / 100; // monthly rate in decimal
+
+      let emi;
+      if (r === 0){
+        emi = P / N; // no interest
+      } else {
+        const pow = Math.pow(1 + r, N);
+        emi = (P * r * pow) / (pow - 1);
+      }
+
+      const totalPayment = emi * N;
+      const totalInterest = totalPayment - P;
+
+      document.getElementById('emiVal').textContent = formatCurrency(emi);
+      document.getElementById('totalPay').textContent = formatCurrency(totalPayment);
+      document.getElementById('totalInt').textContent = formatCurrency(totalInterest);
+      document.getElementById('output').style.display = 'flex';
+      return false;
+    }
+
+    function resetForm(){
+      document.getElementById('emiForm').reset();
+      document.getElementById('output').style.display = 'none';
+    }
+
+    // convenience: calculate on Enter when fields filled
+    document.getElementById('emiForm').addEventListener('keydown', function(ev){
+      if (ev.key === 'Enter'){
+        ev.preventDefault();
+        calculateEMI();
+      }
+    });
+  </script>
+</body>
+</html>
